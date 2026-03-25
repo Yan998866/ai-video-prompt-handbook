@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎬 AI 视频提示词手册 | 中英双语终极版</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--primary:#667eea;--secondary:#764ba2;--accent:#f093fb;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--info:#3b82f6;--china-red:#c41e3a;--bg-light:#f8fafc;--bg-dark:#0f172a;--text-light:#1e293b;--text-dark:#f1f5f9;--card-light:#ffffff;--card-dark:#1e293b;--shadow:0 10px 40px rgba(0,0,0,0.1);--shadow-hover:0 20px 60px rgba(0,0,0,0.15)}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans SC',sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;color:var(--text-light);transition:all 0.4s ease;line-height:1.6}
+    body.dark-mode{background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);color:var(--text-dark)}
+    .loader{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;justify-content:center;align-items:center;z-index:9999;transition:opacity 0.5s ease}
+    .loader.hidden{opacity:0;pointer-events:none}
+    .loader-content{text-align:center;color:white}
+    .spinner{width:60px;height:60px;border:4px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .navbar{background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);padding:1rem 2rem;position:sticky;top:0;z-index:1000;box-shadow:0 4px 20px rgba(0,0,0,0.1);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+    body.dark-mode .navbar{background:rgba(15,23,42,0.95)}
+    .navbar h1{font-size:1.5rem;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:800}
+    .nav-controls{display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap}
+    .btn{padding:0.6rem 1.2rem;border:none;border-radius:25px;cursor:pointer;font-weight:600;font-size:0.9rem;transition:all 0.3s ease;display:inline-flex;align-items:center;gap:0.5rem}
+    .btn-primary{background:linear-gradient(135deg,var(--primary),var(--secondary));color:white}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(102,126,234,0.4)}
+    .btn-outline{background:transparent;border:2px solid var(--primary);color:var(--primary)}
+    .btn-outline:hover{background:var(--primary);color:white}
+    .btn-china{background:linear-gradient(135deg,var(--china-red),#e03c3c);color:white}
+    .btn-china:hover{box-shadow:0 8px 20px rgba(196,30,58,0.4)}
+    .theme-toggle{background:none;border:2px solid var(--primary);color:var(--primary);padding:0.5rem 1rem;border-radius:20px;cursor:pointer;font-weight:600;transition:all 0.3s ease}
+    .theme-toggle:hover{background:var(--primary);color:white}
+    .search-container{max-width:1200px;margin:2rem auto 1rem;padding:0 2rem}
+    .search-box-wrapper{position:relative}
+    .search-box{width:100%;padding:1.2rem 1.5rem 1.2rem 3.5rem;border:none;border-radius:50px;font-size:1.1rem;box-shadow:var(--shadow);outline:none;transition:all 0.3s ease;background:var(--card-light)}
+    body.dark-mode .search-box{background:var(--card-dark);color:var(--text-dark)}
+    .search-box:focus{transform:translateY(-2px);box-shadow:var(--shadow-hover)}
+    .search-icon{position:absolute;left:1.5rem;top:50%;transform:translateY(-50%);font-size:1.3rem;opacity:0.5}
+    .container{max-width:1400px;margin:0 auto;padding:2rem}
+    .stats-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:2rem}
+    .stat-card{background:var(--card-light);padding:1.5rem;border-radius:16px;box-shadow:var(--shadow);text-align:center;transition:all 0.3s ease}
+    body.dark-mode .stat-card{background:var(--card-dark)}
+    .stat-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-hover)}
+    .stat-number{font-size:2.5rem;font-weight:800;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .stat-label{font-size:0.9rem;opacity:0.7;margin-top:0.5rem}
+    .filter-tags{display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:2rem;justify-content:center}
+    .filter-tag{padding:0.5rem 1.2rem;background:var(--card-light);border-radius:25px;cursor:pointer;transition:all 0.3s ease;font-size:0.9rem;font-weight:600;box-shadow:0 2px 10px rgba(0,0,0,0.05)}
+    body.dark-mode .filter-tag{background:var(--card-dark)}
+    .filter-tag:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(0,0,0,0.1)}
+    .filter-tag.active{background:linear-gradient(135deg,var(--primary),var(--secondary));color:white}
+    .section{background:var(--card-light);border-radius:20px;padding:2rem;margin-bottom:2rem;box-shadow:var(--shadow);transition:all 0.3s ease;animation:fadeInUp 0.6s ease-out}
+    body.dark-mode .section{background:var(--card-dark)}
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+    .section:hover{box-shadow:var(--shadow-hover)}
+    .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;cursor:pointer;flex-wrap:wrap;gap:1rem}
+    .section-title{font-size:1.8rem;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:800}
+    .toggle-icon{font-size:1.5rem;transition:transform 0.3s ease;background:none;border:none;cursor:pointer;padding:0.5rem;border-radius:50%;transition:all 0.3s ease}
+    .toggle-icon:hover{background:rgba(102,126,234,0.1)}
+    .section.collapsed .toggle-icon{transform:rotate(-90deg)}
+    .section.collapsed .section-content{display:none}
+    .bilingual-block{background:#1e293b;color:#e2e8f0;padding:1.5rem;border-radius:12px;margin:1rem 0;position:relative;font-family:'Courier New','Monaco',monospace;font-size:0.95rem;line-height:1.8;box-shadow:0 4px 15px rgba(0,0,0,0.2)}
+    .bilingual-block.zh{border-left:4px solid var(--china-red)}
+    .bilingual-block.en{border-left:4px solid var(--primary)}
+    .lang-label{position:absolute;top:0.5rem;right:0.5rem;background:var(--china-red);color:white;padding:0.25rem 0.75rem;border-radius:12px;font-size:0.75rem;font-weight:600}
+    .copy-btn{position:absolute;top:0.75rem;right:4.5rem;background:rgba(255,255,255,0.2);border:none;color:white;padding:0.5rem 1rem;border-radius:8px;cursor:pointer;font-size:0.85rem;transition:all 0.3s ease;display:flex;align-items:center;gap:0.5rem}
+    .copy-btn:hover{background:rgba(255,255,255,0.3);transform:translateY(-2px)}
+    .copy-btn.copied{background:var(--success)}
+    .info-card{padding:1.5rem;border-radius:12px;margin:1.5rem 0;border-left:4px solid var(--warning);background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);box-shadow:0 4px 15px rgba(245,158,11,0.2)}
+    .info-card.tip{background:linear-gradient(135deg,#d1fae5 0%,#a7f3d0 100%);border-left-color:var(--success);box-shadow:0 4px 15px rgba(16,185,129,0.2)}
+    .info-card.china{background:linear-gradient(135deg,#fecaca 0%,#fca5a5 100%);border-left-color:var(--china-red);box-shadow:0 4px 15px rgba(196,30,58,0.2)}
+    .tag{display:inline-block;padding:0.35rem 0.85rem;background:var(--primary);color:white;border-radius:20px;font-size:0.85rem;font-weight:600;margin-right:0.5rem;margin-bottom:0.5rem;transition:all 0.3s ease}
+    .tag:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(102,126,234,0.4);cursor:pointer}
+    .tag-china{background:var(--china-red)}
+    .inspiration-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(350px,1fr));gap:1.5rem;margin:2rem 0}
+    .inspiration-card{background:var(--card-light);border-radius:16px;padding:1.5rem;box-shadow:var(--shadow);transition:all 0.3s ease;border:2px solid transparent;cursor:pointer}
+    body.dark-mode .inspiration-card{background:var(--card-dark)}
+    .inspiration-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-hover);border-color:var(--primary)}
+    .inspiration-card h4{color:var(--primary);margin-bottom:0.75rem;font-size:1.2rem}
+    .inspiration-card .tags{display:flex;flex-wrap:wrap;gap:0.5rem;margin:1rem 0}
+    .generator{background:linear-gradient(135deg,rgba(102,126,234,0.05),rgba(118,75,162,0.05));padding:2rem;border-radius:16px;margin:2rem 0}
+    .form-group{margin-bottom:1.5rem}
+    .form-label{display:block;font-weight:600;margin-bottom:0.75rem;color:var(--primary)}
+    .form-select,.form-input,.form-textarea{width:100%;padding:0.75rem 1rem;border:2px solid rgba(102,126,234,0.2);border-radius:12px;font-size:1rem;transition:all 0.3s ease;background:var(--card-light);color:var(--text-light);font-family:inherit}
+    body.dark-mode .form-select,body.dark-mode .form-input,body.dark-mode .form-textarea{background:var(--card-dark);color:var(--text-dark)}
+    .form-select:focus,.form-input:focus,.form-textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(102,126,234,0.1)}
+    .form-textarea{min-height:100px;resize:vertical}
+    .checkbox-group{display:flex;gap:1rem;margin-top:0.75rem}
+    .checkbox-item{display:flex;align-items:center;gap:0.5rem;cursor:pointer}
+    .footer{text-align:center;padding:3rem 2rem;color:rgba(255,255,255,0.9);background:rgba(0,0,0,0.2);margin-top:3rem}
+    .footer a{color:white;text-decoration:underline}
+    @media(max-width:768px){.navbar{flex-direction:column;align-items:stretch}.nav-controls{justify-content:center}.section-title{font-size:1.4rem}.container{padding:1rem}.stats-bar{grid-template-columns:1fr 1fr}.inspiration-grid{grid-template-columns:1fr}}
+    ::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-track{background:rgba(0,0,0,0.05);border-radius:4px}::-webkit-scrollbar-thumb{background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:4px}::-webkit-scrollbar-thumb:hover{background:var(--secondary)}
+    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:2000;justify-content:center;align-items:center;padding:2rem}
+    .modal.active{display:flex}
+    .modal-content{background:var(--card-light);padding:2rem;border-radius:20px;max-width:900px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 25px 100px rgba(0,0,0,0.3)}
+    body.dark-mode .modal-content{background:var(--card-dark)}
+    .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}
+    .modal-close{background:none;border:none;font-size:2rem;cursor:pointer;color:var(--text-light);transition:all 0.3s ease}
+    body.dark-mode .modal-close{color:var(--text-dark)}
+    .modal-close:hover{color:var(--danger);transform:rotate(90deg)}
+    .table-responsive{overflow-x:auto;margin:1.5rem 0;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.05)}
+    table{width:100%;border-collapse:collapse;background:var(--card-light)}
+    body.dark-mode table{background:var(--card-dark)}
+    th,td{padding:1rem;text-align:left;border-bottom:2px solid rgba(102,126,234,0.1)}
+    th{background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;font-weight:600;white-space:nowrap}
+    tr:hover{background:rgba(102,126,234,0.05)}
+    tr:last-child td{border-bottom:none}
+  </style>
+</head>
+<body>
+  <div class="loader" id="loader"><div class="loader-content"><div class="spinner"></div><p>正在加载 AI 视频提示词手册...</p></div></div>
+  
+  <nav class="navbar">
+    <h1>🎬 AI 视频提示词手册</h1>
+    <div class="nav-controls">
+      <button class="btn btn-china" onclick="showChinaTools()">🇨🇳 国内工具</button>
+      <button class="btn btn-outline" onclick="showFavorites()">❤️ 收藏夹</button>
+      <button class="btn btn-outline" onclick="showHistory()">📋 复制历史</button>
+      <button class="btn btn-outline" onclick="openInspirationModal()">💡 灵感收集</button>
+      <button class="theme-toggle" onclick="toggleTheme()">🌙 夜间模式</button>
+      <button class="btn btn-primary" onclick="openGenerator()">✨ 智能生成</button>
+    </div>
+  </nav>
+
+  <div class="search-container">
+    <div class="search-box-wrapper">
+      <span class="search-icon">🔍</span>
+      <input type="text" class="search-box" placeholder="搜索关键词：猫咪、花海、大海、治愈系、赛博朋克..." oninput="searchContent()" id="searchBox">
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="stats-bar">
+      <div class="stat-card"><div class="stat-number" id="templateCount">0</div><div class="stat-label">模板总数</div></div>
+      <div class="stat-card"><div class="stat-number" id="inspirationCount">0</div><div class="stat-label">灵感收藏</div></div>
+      <div class="stat-card"><div class="stat-number" id="favoriteCount">0</div><div class="stat-label">我的最爱</div></div>
+      <div class="stat-card"><div class="stat-number" id="copyCount">0</div><div class="stat-label">今日复制</div></div>
+    </div>
+
+    <div class="filter-tags" id="filterTags">
+      <div class="filter-tag active" data-filter="all">全部</div>
+      <div class="filter-tag" data-filter="pets">🐕 萌宠动物</div>
+      <div class="filter-tag" data-filter="nature">🌸 自然风光</div>
+      <div class="filter-tag" data-filter="urban">🏙️ 城市建筑</div>
+      <div class="filter-tag" data-filter="people">👤 人物生活</div>
+      <div class="filter-tag" data-filter="food">🍜 美食饮品</div>
+      <div class="filter-tag" data-filter="art">🎨 艺术创意</div>
+      <div class="filter-tag" data-filter="tech">🤖 科技未来</div>
+      <div class="filter-tag" data-filter="festival">🎉 节日庆典</div>
+    </div>
+
+    <!-- 国内工具推荐 -->
+    <div class="section" id="china-tools" data-category="all">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2 class="section-title">🇨🇳 国内 AI 视频工具推荐</h2>
+        <button class="toggle-icon" aria-label="折叠">▼</button>
+      </div>
+      <div class="section-content">
+        <div class="info-card china">
+          <strong>🎯 推荐使用国内工具，中文提示词效果更好，无需翻墙！</strong>
+        </div>
+        <div class="table-responsive">
+          <table>
+            <thead><tr><th>工具名称</th><th>⭐ 评分</th><th>💰 费用</th><th>🎯 特点</th><th>🔗 访问方式</th></tr></thead>
+            <tbody>
+              <tr><td>🥇 可灵 AI (Kling)</td><td>⭐⭐⭐⭐⭐</td><td>免费额度充足</td><td>国产最强，中文友好，效果顶尖</td><td>百度搜索"可灵 AI"或下载快手 App</td></tr>
+              <tr><td>🥈 即梦 AI (Dreamina)</td><td>⭐⭐⭐⭐⭐</td><td>免费额度充足</td><td>字节出品，质量优秀，支持长视频</td><td>百度搜索"即梦 AI"</td></tr>
+              <tr><td>🥉 通义万相</td><td>⭐⭐⭐⭐</td><td>免费</td><td>阿里出品，稳定可靠</td><td>支付宝小程序搜索"通义万相"</td></tr>
+              <tr><td>智谱清言</td><td>⭐⭐⭐⭐</td><td>免费额度</td><td>清华智谱，对话式生成</td><td>百度搜索"智谱清言"</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 核心公式 -->
+    <div class="section" id="formula" data-category="all">
+      <div class="section-header" onclick="toggleSection(this)">
+        <h2 class="section-title">💡 核心公式（中英双语）</h2>
+        <button class="toggle-icon" aria-label="折叠">▼</button>
+      </div>
+      <div class="section-content">
+        <div class="info-card tip"><strong>🎯 万能结构：记住这个公式，90% 的视频都能搞定！</strong></div>
+        <div class="bilingual-block zh"><span class="lang-label">中文</span>📹 镜头 + 🎭 主体 + 🎬 动作 + 🌄 环境 + 💡 光线 + 💖 情绪 + ⚙️ 参数 = 🎬 完美视频<button class="copy-btn" onclick="copyCode(this,'zh')">📋 复制中文</button></div>
+        <div class="bilingual-block en"><span class="lang-label">English</span>📹 Camera + 🎭 Subject + 🎬 Action + 🌄 Environment + 💡 Lighting + 💖 Mood + ⚙️ Params = 🎬 Perfect Video<button class="copy-btn" onclick="copyCode(this,'en')">📋 Copy English</button></div>
+      </div>
+    </div>
+
+    <!-- 智能生成器 -->
+    <div class="section" id="generator-section" data-category="all">
+      <div class="section-header"><h2 class="section-title">✨ 智能提示词生成器（中英双语）</h2></div>
+      <div class="section-content">
+        <div class="info-card tip"><strong>🤖 选择选项，自动生成中英文提示词！可灵/即梦专用～</strong></div>
+        <div class="generator">
+          <div class="form-group">
+            <label class="form-label">🎬 视频类型</label>
+            <select class="form-select" id="gen-type">
+              <option value="">请选择视频类型...</option>
+              <optgroup label="🐕 萌宠动物"><option value="pets">宠物日常</option><option value="wildlife">野生动物</option></optgroup>
+              <optgroup label="🌸 自然风光"><option value="landscape">风景大片</option><option value="flowers">花卉植物</option><option value="ocean">海洋湖泊</option></optgroup>
+              <optgroup label="🏙️ 城市建筑"><option value="cityscape">城市天际线</option><option value="street">街头巷尾</option></optgroup>
+              <optgroup label="👤 人物生活"><option value="portrait">人像特写</option><option value="lifestyle">生活方式</option></optgroup>
+              <optgroup label="🍜 美食饮品"><option value="food">美食制作</option></optgroup>
+              <optgroup label="🎨 艺术创意"><option value="art">艺术创作</option></optgroup>
+              <optgroup label="🤖 科技未来"><option value="tech">科技产品</option><option value="cyberpunk">赛博朋克</option></optgroup>
+              <optgroup label="🎉 节日庆典"><option value="festival">节日庆典</option></optgroup>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">📹 镜头运动（中英双语）</label>
+            <select class="form-select" id="gen-camera">
+              <option value="">请选择...</option>
+              <option value="zh|无人机缓缓垂直上升|Drone shot, camera slowly rises vertically">🚁 无人机缓缓上升</option>
+              <option value="zh|无人机向前推进|Drone shot, camera moves forward">🚁 无人机向前推进</option>
+              <option value="zh|无人机环绕拍摄|Drone shot, orbits around the subject">🚁 无人机环绕拍摄</option>
+              <option value="zh|镜头缓缓推进|Camera pushes in smoothly">📷 镜头推进特写</option>
+              <option value="zh|镜头缓缓拉远|Camera pulls back smoothly">📷 镜头拉远展景</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">🌄 场景环境（中英双语）</label>
+            <select class="form-select" id="gen-environment">
+              <option value="">请选择...</option>
+              <option value="zh|在盛开的花田中|in a blooming flower field">🌸 盛开的花田</option>
+              <option value="zh|在宁静的湖畔|by the peaceful lake">🏞️ 宁静湖畔</option>
+              <option value="zh|在金色沙滩上|on the sandy beach">🏖️ 金色沙滩</option>
+              <option value="zh|在茂密的森林中|in the lush green forest">🌲 茂密森林</option>
+              <option value="zh|在繁华的街道|in the bustling city street">🏙️ 繁华街道</option>
+              <option value="zh|在温馨的咖啡馆|in the cozy cafe">☕ 温馨咖啡馆</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">💡 光线时间（中英双语）</label>
+            <select class="form-select" id="gen-lighting">
+              <option value="">请选择...</option>
+              <option value="zh|温暖的黄金时刻光线|Warm golden hour lighting">🌅 黄金时刻</option>
+              <option value="zh|柔和的晨光|Soft morning sunlight">☀️ 柔和晨光</option>
+              <option value="zh|温暖的日落余晖|Warm sunset glow">🌇 温暖日落</option>
+              <option value="zh|霓虹城市灯光|Neon city lights">🌃 霓虹灯光</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">💖 情绪氛围（中英双语）</label>
+            <select class="form-select" id="gen-mood">
+              <option value="">请选择...</option>
+              <option value="zh|治愈冥想的氛围|healing and meditative mood">😊 治愈冥想</option>
+              <option value="zh|纯粹的快乐和喜悦|pure happiness and joy">😄 快乐喜悦</option>
+              <option value="zh|宁静祥和|peaceful and serene">🧘 宁静祥和</option>
+              <option value="zh|浪漫梦幻|romantic and dreamy">💕 浪漫梦幻</option>
+              <option value="zh|史诗宏伟|epic and majestic">🏔️ 史诗宏伟</option>
+            </select>
+          </div>
+          <div class="checkbox-group">
+            <label class="checkbox-item"><input type="checkbox" id="gen-lang-zh" checked><span>生成中文提示词</span></label>
+            <label class="checkbox-item"><input type="checkbox" id="gen-lang-en" checked><span>生成英文提示词</span></label>
+          </div>
+          <button class="btn btn-primary" onclick="generateBilingual()" style="width:100%;padding:1rem;font-size:1.1rem;margin-top:1rem;">✨ 生成中英双语提示词</button>
+        </div>
+        <div id="generated-result" style="display:none;margin-top:2rem;">
+          <h3>🎉 生成的提示词：</h3>
+          <div id="generated-zh" style="display:none;"><h4 style="color:var(--china-red);margin:1rem 0 0.5rem;">🇨🇳 中文版（推荐用于可灵/即梦）</h4><div class="bilingual-block zh"><span class="lang-label">中文</span><div id="generated-prompt-zh"></div><button class="copy-btn" onclick="copyGenerated('zh')">📋 复制中文</button></div></div>
+          <div id="generated-en" style="display:none;"><h4 style="color:var(--primary);margin:1rem 0 0.5rem;">🇺🇸 English Version</h4><div class="bilingual-block en"><span class="lang-label">English</span><div id="generated-prompt-en"></div><button class="copy-btn" onclick="copyGenerated('en')">📋 Copy English</button></div></div>
+          <div style="display:flex;gap:1rem;margin-top:1rem;flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="copyBoth()">📋 复制双语</button>
+            <button class="btn btn-outline" onclick="clearGenerator()">🔄 重置</button>
+            <button class="btn btn-china" onclick="saveToInspiration()">💾 保存到灵感库</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 灵感收集展示区 -->
+    <div class="section" id="inspiration-gallery" data-category="all">
+      <div class="section-header">
+        <h2 class="section-title">💡 灵感收集库（中英双语）</h2>
+        <button class="btn btn-primary" onclick="addNewInspiration()">➕ 添加灵感</button>
+      </div>
+      <div class="section-content">
+        <div class="info-card success"><strong>💡 收集你的创意灵感，建立专属素材库！每个灵感都包含中英文提示词。</strong></div>
+        <div class="inspiration-grid" id="inspirationGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer"><p>🎨 最后更新：2026-03-25</p><p>维护：创意助手 · 严天妤的灵感库</p><p>有问题随时问我！✨</p></footer>
+
+  <div class="modal" id="inspirationModal">
+    <div class="modal-content">
+      <div class="modal-header"><h2 id="modalTitle">💡 灵感详情</h2><button class="modal-close" onclick="closeModal()">&times;</button></div>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <script>
+    let copyHistory=JSON.parse(localStorage.getItem('copyHistory')||'[]');
+    let favorites=JSON.parse(localStorage.getItem('favorites')||'[]');
+    let inspirations=JSON.parse(localStorage.getItem('inspirations')||'[]');
+    let todayCopies=parseInt(localStorage.getItem('todayCopies')||'0');
+    let lastVisitDate=localStorage.getItem('lastVisitDate')||'';
+    let currentFilter='all';
+    let generatedPromptZH='';
+    let generatedPromptEN='';
+
+    const defaultInspirations=[
+      {id:1,title:"🐕 治愈系狗狗",category:"pets",tags:["治愈系","狗狗","乡村","黄金时刻"],promptZH:"电影感无人机航拍，一镜到底。从一只浅棕色毛茸茸狗狗闭眼享受阳光的特写开始，镜头缓慢垂直上升并后退，逐渐展现草地、平静水面和完美倒影。继续拉升露出白墙黑瓦的房子、高大绿树、黄色花田。最终画面：宁静的乡村全景，春日田园。温暖黄金时刻光线，柔和调色，治愈冥想氛围。4K 画质，慢速流畅运动，专业摄影。",promptEN:"Cinematic drone shot, one continuous take. Starting from extreme close-up of fluffy light-brown dog with closed eyes sitting peacefully in grass enjoying sunlight. Camera slowly rises vertically and pulls back smoothly, revealing meadow then calm water with perfect reflections. Continue ascending to show white houses with dark roofs, tall green trees, yellow flowering fields. Final frame: serene rural landscape panorama. Warm golden hour lighting, soft color grading, healing meditative mood. 4K, slow smooth motion, professional cinematography.",description:"从狗狗特写开始，无人机缓缓上升展现整个乡村美景",createdAt:new Date().toLocaleString('zh-CN')},
+      {id:2,title:"🌸 樱花雨中的少女",category:"nature",tags:["樱花","少女","春天","浪漫","吉卜力"],promptZH:"美丽少女站在盛开的樱花树下，粉色花瓣如雪般轻轻飘落，柔和晨光透过树枝洒下，浪漫梦幻氛围，吉卜力动画风格，马卡龙色系。",promptEN:"Beautiful young woman standing under blooming cherry blossom tree, pink petals falling gently like snow, soft morning sunlight filtering through branches, romantic and dreamy atmosphere, Studio Ghibli animation style, pastel color palette.",description:"樱花树下，花瓣如雪般飘落，吉卜力动画风格",createdAt:new Date().toLocaleString('zh-CN')},
+      {id:3,title:"🌊 日落海滩",category:"nature",tags:["海滩","日落","浪漫","海浪"],promptZH:"浪漫日落海滩场景，柔和海浪轻拍白色沙滩，椰树在微风中摇曳，黄金时刻光辉，粉橙色天空，梦幻背景虚化效果。",promptEN:"Romantic sunset beach scene, soft waves gently lapping on white sand shore, palm trees swaying in breeze, golden hour glow, pastel pink and orange sky, dreamy bokeh effect.",description:"浪漫日落海滩，粉色天空，椰林摇曳",createdAt:new Date().toLocaleString('zh-CN')},
+      {id:4,title:"🏙️ 赛博朋克夜景",category:"tech",tags:["赛博朋克","夜景","霓虹","未来"],promptZH:"未来赛博朋克城市夜景，霓虹灯招牌无处不在，飞行器在摩天大楼间穿梭，雨水打湿的街道反射彩色灯光，戏剧性青橙色调，银翼杀手美学。",promptEN:"Futuristic cyberpunk city at night, neon signs everywhere, flying cars between skyscrapers, rain-slicked streets reflecting colorful lights, dramatic teal and orange color grading, Blade Runner aesthetic.",description:"未来赛博城市，霓虹闪烁，银翼杀手风格",createdAt:new Date().toLocaleString('zh-CN')}
+    ];
+
+    window.addEventListener('load',()=>{
+      setTimeout(()=>{document.getElementById('loader').classList.add('hidden');},1000);
+      if(inspirations.length===0){inspirations=[...defaultInspirations];localStorage.setItem('inspirations',JSON.stringify(inspirations));}
+      renderInspirations();updateStats();
+      const today=new Date().toDateString();
+      if(lastVisitDate!==today){todayCopies=0;localStorage.setItem('todayCopies','0');localStorage.setItem('lastVisitDate',today);}
+      if(localStorage.getItem('theme')==='dark'){document.body.classList.add('dark-mode');document.querySelector('.theme-toggle').textContent='☀️ 日间模式';}
+    });
+
+    function updateStats(){
+      document.getElementById('templateCount').textContent='50+';
+      document.getElementById('inspirationCount').textContent=inspirations.length;
+      document.getElementById('favoriteCount').textContent=favorites.length;
+      document.getElementById('copyCount').textContent=todayCopies;
+    }
+
+    function renderInspirations(filter='all'){
+      const grid=document.getElementById('inspirationGrid');
+      grid.innerHTML='';
+      const filtered=filter==='all'?inspirations:inspirations.filter(i=>i.category===filter);
+      filtered.forEach(insp=>{
+        const card=document.createElement('div');
+        card.className='inspiration-card';
+        card.onclick=()=>showInspirationDetail(insp.id);
+        const tagsHTML=insp.tags.map(tag=>`<span class="tag">${tag}</span>`).join('');
+        card.innerHTML=`
+          <h4>${insp.title}</h4>
+          <p style="font-size:0.9rem;opacity:0.8;margin-bottom:1rem;">${insp.description}</p>
+          <div class="tags">${tagsHTML}</div>
+          <code style="background:rgba(196,30,58,0.1);color:var(--china-red);display:block;margin:0.75rem 0;">${insp.promptZH.substring(0,80)}...</code>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:1rem;">
+            <small style="opacity:0.6;">⏰ ${insp.createdAt}</small>
+            <button class="btn btn-china" onclick="event.stopPropagation();copyInspiration(${insp.id},'zh')" style="padding:0.4rem 0.8rem;font-size:0.85rem;">📋 复制中文</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function showInspirationDetail(id){
+      const insp=inspirations.find(i=>i.id===id);
+      if(!insp)return;
+      document.getElementById('modalTitle').textContent=insp.title;
+      document.getElementById('modalBody').innerHTML=`
+        <div class="info-card tip"><strong>📝 描述：</strong><br>${insp.description}</div>
+        <div style="margin:1.5rem 0;"><strong>🏷️ 标签：</strong><br><div style="margin-top:0.5rem;">${insp.tags.map(tag=>`<span class="tag">${tag}</span>`).join('')}</div></div>
+        <div style="margin:1.5rem 0;"><strong style="color:var(--china-red);">🇨🇳 中文提示词（推荐用于可灵/即梦）：</strong><div class="bilingual-block zh"><span class="lang-label">中文</span>${insp.promptZH}<button class="copy-btn" onclick="copyInspiration(${insp.id},'zh',this)">📋 复制</button></div></div>
+        <div style="margin:1.5rem 0;"><strong style="color:var(--primary);">🇺🇸 English Prompt：</strong><div class="bilingual-block en"><span class="lang-label">English</span>${insp.promptEN}<button class="copy-btn" onclick="copyInspiration(${insp.id},'en',this)">📋 Copy</button></div></div>
+        <div style="display:flex;gap:1rem;margin-top:2rem;flex-wrap:wrap;">
+          <button class="btn btn-china" onclick="copyInspiration(${insp.id},'zh');closeModal();">📋 复制中文</button>
+          <button class="btn btn-primary" onclick="copyInspiration(${insp.id},'en');closeModal();">📋 Copy English</button>
+          <button class="btn btn-outline" onclick="editInspiration(${insp.id});closeModal();">✏️ 编辑</button>
+          <button class="btn btn-outline" onclick="deleteInspiration(${insp.id});closeModal();">🗑️ 删除</button>
+        </div>
+      `;
+      document.getElementById('inspirationModal').classList.add('active');
+    }
+
+    function closeModal(){document.getElementById('inspirationModal').classList.remove('active');}
+
+    function addNewInspiration(){
+      const title=prompt('请输入灵感标题：');if(!title)return;
+      const description=prompt('请输入简短描述：');
+      const category=prompt('请输入分类 (pets/nature/urban/people/food/art/tech/festival)：','nature');
+      const tagsStr=prompt('请输入标签（用逗号分隔）：','创意，灵感');
+      const promptZH=prompt('请输入中文提示词：');
+      const promptEN=prompt('请输入英文提示词：');
+      if(!promptZH||!promptEN)return;
+      const newInsp={id:Date.now(),title:title,description:description||'',category:category||'nature',tags:tagsStr.split(',').map(t=>t.trim()),promptZH:promptZH,promptEN:promptEN,createdAt:new Date().toLocaleString('zh-CN')};
+      inspirations.unshift(newInsp);
+      localStorage.setItem('inspirations',JSON.stringify(inspirations));
+      renderInspirations();updateStats();alert('✅ 灵感已添加！');
+    }
+
+    function editInspiration(id){
+      const index=inspirations.findIndex(i=>i.id===id);if(index===-1)return;
+      const insp=inspirations[index];
+      const newTitle=prompt('修改标题：',insp.title);if(!newTitle)return;
+      inspirations[index]={...insp,title:newTitle,description:prompt('修改描述：',insp.description)||insp.description,promptZH:prompt('修改中文提示词：',insp.promptZH)||insp.promptZH,promptEN:prompt('修改英文提示词：',insp.promptEN)||insp.promptEN};
+      localStorage.setItem('inspirations',JSON.stringify(inspirations));renderInspirations();alert('✅ 灵感已更新！');
+    }
+
+    function deleteInspiration(id){
+      if(!confirm('确定要删除这个灵感吗？'))return;
+      inspirations=inspirations.filter(i=>i.id!==id);
+      localStorage.setItem('inspirations',JSON.stringify(inspirations));renderInspirations();updateStats();alert('🗑️ 灵感已删除！');
+    }
+
+    function copyInspiration(id,lang,btn){
+      const insp=inspirations.find(i=>i.id===id);if(!insp)return;
+      const text=lang==='zh'?insp.promptZH:insp.promptEN;
+      navigator.clipboard.writeText(text).then(()=>{
+        addToHistory(text,`inspiration-${id}-${lang}`);
+        todayCopies++;localStorage.setItem('todayCopies',todayCopies);updateStats();
+        if(btn){btn.textContent=lang==='zh'?'✅ 已复制':'✅ Copied';setTimeout(()=>{btn.textContent=lang==='zh'?'📋 复制中文':'📋 Copy English';},2000);}
+        else{alert(lang==='zh'?'✅ 已复制到剪贴板！':'✅ Copied to clipboard!');}
+      });
+    }
+
+    function generateBilingual(){
+      const type=document.getElementById('gen-type').value;
+      const camera=document.getElementById('gen-camera').value;
+      const environment=document.getElementById('gen-environment').value;
+      const lighting=document.getElementById('gen-lighting').value;
+      const mood=document.getElementById('gen-mood').value;
+      const genLangZH=document.getElementById('gen-lang-zh').checked;
+      const genLangEN=document.getElementById('gen-lang-en').checked;
+
+      if(!type||!camera){alert('⚠️ 请至少选择视频类型和镜头运动！');return;}
+
+      const parts=camera.split('|');
+      const zhParts=[parts[1]];
+      const enParts=[parts[2]];
+
+      if(environment){const e=environment.split('|');zhParts.push(e[1]);enParts.push(e[2]);}
+      if(lighting){const l=lighting.split('|');zhParts.push(l[1]);enParts.push(l[2]);}
+      if(mood){const m=mood.split('|');zhParts.push(m[1]);enParts.push(m[2]);}
+
+      generatedPromptZH=zhParts.join('，');
+      generatedPromptEN=enParts.join(', ');
+
+      document.getElementById('generated-prompt-zh').textContent=generatedPromptZH;
+      document.getElementById('generated-prompt-en').textContent=generatedPromptEN;
+
+      document.getElementById('generated-zh').style.display=genLangZH?'block':'none';
+      document.getElementById('generated-en').style.display=genLangEN?'block':'none';
+      document.getElementById('generated-result').style.display='block';
+      document.getElementById('generated-result').scrollIntoView({behavior:'smooth'});
+    }
+
+    function copyGenerated(lang){
+      const text=lang==='zh'?generatedPromptZH:generatedPromptEN;
+      if(!text)return;
+      navigator.clipboard.writeText(text).then(()=>{
+        addToHistory(text,'generated-'+lang);
+        todayCopies++;localStorage.setItem('todayCopies',todayCopies);updateStats();
+        alert(lang==='zh'?'✅ 已复制中文！':'✅ Copied English!');
+      });
+    }
+
+    function copyBoth(){
+      const both='🇨🇳 中文：\n'+generatedPromptZH+'\n\n🇺🇸 English:\n'+generatedPromptEN;
+      navigator.clipboard.writeText(both).then(()=>{
+        addToHistory(both,'generated-both');
+        todayCopies++;localStorage.setItem('todayCopies',todayCopies);updateStats();
+        alert('✅ 已复制双语版本！');
+      });
+    }
+
+    function clearGenerator(){
+      document.querySelectorAll('#generator-section select').forEach(el=>el.value='');
+      document.getElementById('generated-result').style.display='none';
+      generatedPromptZH='';generatedPromptEN='';
+    }
+
+    function saveToInspiration(){
+      if(!generatedPromptZH||!generatedPromptEN){alert('⚠️ 请先生成提示词！');return;}
+      const title=prompt('为这个灵感起个标题：');if(!title)return;
+      const description=prompt('添加简短描述（可选）：','');
+      const category=prompt('选择分类 (pets/nature/urban/people/food/art/tech/festival)：','nature');
+      const tagsStr=prompt('添加标签（用逗号分隔）：','创意，灵感');
+      const newInsp={id:Date.now(),title:title,description:description||'',category:category||'nature',tags:tagsStr.split(',').map(t=>t.trim()),promptZH:generatedPromptZH,promptEN:generatedPromptEN,createdAt:new Date().toLocaleString('zh-CN')};
+      inspirations.unshift(newInsp);
+      localStorage.setItem('inspirations',JSON.stringify(inspirations));
+      renderInspirations();updateStats();alert('✅ 已保存到灵感库！');
+    }
+
+    function addToHistory(content,templateId){
+      const item={content:content.substring(0,100)+'...',fullContent:content,templateId:templateId,timestamp:new Date().toLocaleString('zh-CN')};
+      copyHistory.unshift(item);
+      if(copyHistory.length>20)copyHistory.pop();
+      localStorage.setItem('copyHistory',JSON.stringify(copyHistory));
+    }
+
+    function showHistory(){
+      if(copyHistory.length===0){alert('📋 还没有复制历史哦～');return;}
+      alert('📋 最近复制：\n\n'+copyHistory.slice(0,5).map((item,i)=>`${i+1}. ${item.content}\n   ⏰ ${item.timestamp}`).join('\n\n'));
+    }
+
+    function showFavorites(){alert('❤️ 收藏夹功能开发中...\n\n当前收藏数：'+favorites.length);}
+    function openInspirationModal(){alert('💡 灵感收集功能说明：\n\n1. 浏览下方的灵感卡片\n2. 点击卡片查看详情\n3. 可以添加、编辑、删除灵感\n4. 生成的提示词也可以保存到灵感库\n\n当前已收藏 '+inspirations.length+' 个灵感');}
+    function openGenerator(){const genSection=document.getElementById('generator-section');genSection.style.display='block';genSection.scrollIntoView({behavior:'smooth',block:'start'});}
+    function showChinaTools(){alert('🇨🇳 国内工具推荐：\n\n🥇 可灵 AI (Kling) - 国产最强\n🥈 即梦 AI (Dreamina) - 字节出品\n🥉 通义万相 - 阿里出品\n\n查看上方表格详细了解！');}
+    function toggleTheme(){document.body.classList.toggle('dark-mode');const btn=document.querySelector('.theme-toggle');if(document.body.classList.contains('dark-mode')){btn.textContent='☀️ 日间模式';localStorage.setItem('theme','dark');}else{btn.textContent='🌙 夜间模式';localStorage.setItem('theme','light');}}
+    function toggleSection(header){const section=header.parentElement;section.classList.toggle('collapsed');}
+    function copyCode(btn,lang){const codeBlock=btn.parentElement;const code=lang==='zh'?'📹 镜头 + 🎭 主体 + 🎬 动作 + 🌄 环境 + 💡 光线 + 💖 情绪 + ⚙️ 参数 = 🎬 完美视频':'📹 Camera + 🎭 Subject + 🎬 Action + 🌄 Environment + 💡 Lighting + 💖 Mood + ⚙️ Params = 🎬 Perfect Video';navigator.clipboard.writeText(code).then(()=>{btn.textContent=lang==='zh'?'✅ 已复制':'✅ Copied';btn.classList.add('copied');todayCopies++;localStorage.setItem('todayCopies',todayCopies);updateStats();setTimeout(()=>{btn.textContent=lang==='zh'?'📋 复制中文':'📋 Copy English';btn.classList.remove('copied');},2000);});}
+    function searchContent(){const input=document.getElementById('searchBox');const filter=input.value.toLowerCase();const sections=document.querySelectorAll('.section');sections.forEach(section=>{const text=section.textContent.toLowerCase();if(text.includes(filter)||filter===''){section.style.display='block';}else{section.style.display='none';}});}
+    document.querySelectorAll('.filter-tag').forEach(tag=>{tag.addEventListener('click',function(){document.querySelectorAll('.filter-tag').forEach(t=>t.classList.remove('active'));this.classList.add('active');const filter=this.dataset.filter;currentFilter=filter;renderInspirations(filter);});});
+  </script>
+</body>
+</html>
